@@ -5,6 +5,11 @@ from utils.console import print_step, print_substep
 import json
 
 
+NSFW_PROMPT = '[data-testid="content-gate"]'
+NSFW_PROMPT_ACCEPT_BUTTON = '[data-testid="content-gate"] button'
+THREAD_TITLE_LABEL = '[data-test-id="post-content"]'
+
+
 def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
     """Downloads screenshots of reddit posts as they are seen on the web.
 
@@ -32,13 +37,13 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
         page = context.new_page()
         page.goto(reddit_object["thread_url"])
         page.set_viewport_size(ViewportSize(width=1920, height=1080))
-        if page.locator('[data-testid="content-gate"]').is_visible():
+        if page.locator(NSFW_PROMPT).is_visible():
             # This means the post is NSFW and requires to click the proceed button.
 
             print_substep("Post is NSFW. You are spicy...")
-            page.locator('[data-testid="content-gate"] button').click()
+            page.locator(NSFW_PROMPT_ACCEPT_BUTTON).click()
 
-        page.locator('[data-test-id="post-content"]').screenshot(
+        page.locator(THREAD_TITLE_LABEL).screenshot(
             path="assets/png/title.png"
         )
 

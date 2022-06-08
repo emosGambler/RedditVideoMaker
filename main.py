@@ -14,11 +14,14 @@ print_markdown(
 )
 
 time.sleep(3)
+thread_count = 4
 
-reddit_object = get_subreddit_threads()
+reddit_objects = get_subreddit_threads(thread_count)
 load_dotenv()
-length, number_of_comments = save_text_to_wav(reddit_object)
-download_screenshots_of_reddit_posts(reddit_object, number_of_comments, os.getenv("THEME"))
-download_background()
-chop_background_video(length)
-final_video = make_final_video(number_of_comments)
+
+for reddit_object in reddit_objects:
+    length, number_of_comments = save_text_to_wav(reddit_object)
+    download_screenshots_of_reddit_posts(reddit_object, number_of_comments, os.getenv("THEME"))
+    download_background()
+    chop_background_video(length)
+    final_video = make_final_video(number_of_comments)
