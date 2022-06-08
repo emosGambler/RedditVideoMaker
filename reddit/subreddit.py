@@ -48,16 +48,17 @@ def get_subreddit_threads():
             subreddit = reddit.subreddit("askreddit")
             print_substep("Subreddit not defined. Using AskReddit.")
 
-    threads = subreddit.hot(limit=25)
+    # threads = subreddit.hot(limit=25)
 
     should_continue = True
+    submission_number = 1
 
     while should_continue:
         # TODO: threads is probably some sort of async thing, this is why for loop doesn't work, please check
-        submission = list(threads)[random.randrange(0, 25)]
+        submission = list(subreddit.hot(limit=25))[random.randrange(0, 25)]
         print_substep(f"Video will be: {submission.title} :thumbsup:")
         accept_thread = input("> Continue? Y/N: ")
-        if accept_thread is "Y" or "y":
+        if accept_thread.lower() == "y":
             should_continue = False
             print("Okaay, let's go")
             try:
