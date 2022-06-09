@@ -14,12 +14,13 @@ print_markdown(
 )
 
 time.sleep(3)
-thread_count = 4
-
-reddit_objects = get_subreddit_threads(thread_count)
 load_dotenv()
 
+thread_count = int(os.getenv("THREADS_COUNT"))
+reddit_objects = get_subreddit_threads(thread_count)
+
 for reddit_object in reddit_objects:
+    print("Okaay, let's go")
     length, number_of_comments = save_text_to_wav(reddit_object)
     download_screenshots_of_reddit_posts(reddit_object, number_of_comments, os.getenv("THEME"))
     download_background()

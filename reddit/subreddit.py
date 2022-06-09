@@ -27,11 +27,16 @@ def get_subreddit_threads(thread_count):
     content = {}
 
     for i in range(0, thread_count):
-        submission = list(subreddit.hot(limit=thread_count))[i]
+        if os.getenv("POSTS_TYPE").lower() == "top":
+            time = os.getenv("TIME").lower()
+            submission = list(subreddit.top(time, limit=thread_count))[i]
+        else:
+            # take hot
+            submission = list(subreddit.hot(limit=thread_count))[i]
         print_substep(f"Video will be: {submission.title} :thumbsup:")
         accept_thread = input("> Continue? Y/N: ")
         if accept_thread.lower() == "y":
-            print("Okaay, let's go")
+            print("Good. Preparing.")
             try:
                 content["thread_url"] = submission.url
                 content["thread_title"] = submission.title
