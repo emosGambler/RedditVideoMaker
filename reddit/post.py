@@ -24,7 +24,7 @@ class Post:
                     }
                 )
             self.is_valid = True
-            print("Received AskReddit threads successfully.")
+            print(f"Received AskReddit threads successfully. %s", self.title)
         except AttributeError as e:
             print('Warn! ', str(e))
 

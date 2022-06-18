@@ -5,9 +5,10 @@ from utils.console import print_step, print_substep
 import json
 
 
-NSFW_PROMPT = '[data-testid="content-gate"]'
-NSFW_PROMPT_ACCEPT_BUTTON = '[data-testid="content-gate"] button'
-THREAD_TITLE_LABEL = '[data-test-id="post-content"]'
+NSFW_PROMPT_CSS = '[data-testid="content-gate"]'
+NSFW_PROMPT_ACCEPT_BUTTON_CSS = '[data-testid="content-gate"] button'
+THREAD_TITLE_CSS = '[data-test-id="post-content"]'
+CLOSE_COOKIES_BUTTON_XPATH = '(//*[text() = "We use cookies on our websites for a number of purposes, including analytics and performance, functionality and advertising."]/..//button)[1]'
 
 
 def download_screenshots_of_reddit_posts(reddit_post, screenshot_num, theme):
@@ -40,7 +41,7 @@ def download_screenshots_of_reddit_posts(reddit_post, screenshot_num, theme):
             page.set_viewport_size(ViewportSize(width=1920, height=1080))
             handle_nsfw_prompt(page)
 
-            page.locator(THREAD_TITLE_LABEL).screenshot(
+            page.locator(THREAD_TITLE_CSS).screenshot(
                 path="assets/png/title.png"
             )
 
@@ -55,6 +56,7 @@ def download_screenshots_of_reddit_posts(reddit_post, screenshot_num, theme):
 
                 erred = try_go_to(page, reddit_post.url)
                 if not erred:
+                    handle_cookies_prompt(page)
                     page.locator(f"#t1_{comment['comment_id']}").screenshot(
                         path=f"assets/png/comment_{idx}.png"
                     )
@@ -74,7 +76,12 @@ def try_go_to(page, url):
 
 
 def handle_nsfw_prompt(page):
-    if page.locator(NSFW_PROMPT).is_visible():
+    if page.locator(NSFW_PROMPT_CSS).is_visible():
         print_substep("Post is NSFW. You are spicy...")
-        page.locator(NSFW_PROMPT_ACCEPT_BUTTON).click()
+        page.locator(NSFW_PROMPT_ACCEPT_BUTTON_CSS).click()
 
+
+def handle_cookies_prompt(page):
+    if page.locator(CLOSE_COOKIES_BUTTON_XPATH).is_visible():
+        print_substep("Found cookies info. Closing...")
+        page.locator(CLOSE_COOKIES_BUTTON_XPATH).click()
