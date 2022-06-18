@@ -1,11 +1,11 @@
-from utils.console import print_markdown, print_step, print_substep
+from utils.console import print_step, print_substep
 import praw
-import random
 from dotenv import load_dotenv
 import os
+from reddit.post import Post
 
 
-def get_subreddit_threads(thread_count):
+def get_posts(thread_count):
     load_dotenv()
     print_step("Getting threads...")
     passkey = get_passkey()
@@ -24,7 +24,6 @@ def get_subreddit_threads(thread_count):
         subreddit = prompt_user_for_subreddit(reddit)
 
     contents = []
-    content = {}
 
     for i in range(0, thread_count):
         if os.getenv("POSTS_TYPE").lower() == "top":
@@ -34,31 +33,15 @@ def get_subreddit_threads(thread_count):
             # take hot
             submission = list(subreddit.hot(limit=thread_count))[i]
         print_substep(f"Video will be: {submission.title} :thumbsup:")
+
         accept_thread = input("> Continue? Y/N: ")
         if accept_thread.lower() == "y":
             print("Good. Preparing.")
-            try:
-                content["thread_url"] = submission.url
-                content["thread_title"] = submission.title
-                content["comments"] = []
-
-                for top_level_comment in submission.comments:
-                    content["comments"].append(
-                        {
-                            "comment_body": top_level_comment.body,
-                            "comment_url": top_level_comment.permalink,
-                            "comment_id": top_level_comment.id,
-                        }
-                    )
-
-            except AttributeError as e:
-                pass
-            print_substep("Received AskReddit threads successfully.", style="bold green")
-            contents.append(content)
+            post = Post(submission)
+            if post.is_valid:
+                contents.append(post)
         else:
             print("Okay, skipping this one.")
-
-        content = {}
 
     return contents
 

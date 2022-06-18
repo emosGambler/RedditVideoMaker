@@ -5,11 +5,11 @@ from utils.console import print_step, print_substep
 from rich.progress import track
 
 
-def save_text_to_wav(reddit_obj):
+def save_text_to_wav(reddit_post):
     """Saves Text to WAV files.
 
     Args:
-        reddit_obj : The reddit object you received from the reddit API in the askreddit.py file.
+        reddit_post : The reddit object you received from the reddit API in the askreddit.py file.
     """
     print_step("Saving Text to WAV files...")
     length = 0
@@ -23,11 +23,11 @@ def save_text_to_wav(reddit_obj):
     voices = engine.getProperty('voices')
 
     engine.setProperty('voice', voices[1].id)  # David
-    engine.save_to_file(reddit_obj["thread_title"], "assets/wav/title.wav")
+    engine.save_to_file(reddit_post.title, "assets/wav/title.wav")
     engine.runAndWait()
     length += WAVE(f"assets/wav/title.wav").info.length
 
-    for idx, comment in track(enumerate(reddit_obj["comments"]), "Saving..."):
+    for idx, comment in track(enumerate(reddit_post.comments), "Saving..."):
         # ! Stop creating wav files if the length is greater than 50 seconds. This can be longer, but this is just a good starting point
         if length > 50:
             break
