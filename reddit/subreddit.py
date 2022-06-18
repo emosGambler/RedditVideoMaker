@@ -34,12 +34,23 @@ def get_posts(thread_count):
             submission = list(subreddit.hot(limit=thread_count))[i]
         print_substep(f"Video will be: {submission.title} :thumbsup:")
 
-        accept_thread = input("> Continue? Y/N: ")
-        if accept_thread.lower() == "y":
+        user_input = input("> Q for quit\n" +
+                           "> B to break\n" +
+                           "> N to skip\n"
+                           "> Yes (y) to download\n"
+                           "> Input requested >> ")
+        if (user_input.lower() == "y") or (user_input.lower() == "yes"):
             print("Good. Preparing.")
             post = Post(submission)
             if post.is_valid:
                 contents.append(post)
+        elif (user_input.lower() == "q") or (user_input.lower() == "quit"):
+            print("Ok, we will download what we have.")
+            break
+        elif (user_input.lower() == "b") or (user_input.lower() == "break"):
+            contents = []
+            print("Ok, we are terminating the program.")
+            break
         else:
             print("Okay, skipping this one.")
 
